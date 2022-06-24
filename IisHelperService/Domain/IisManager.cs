@@ -7,7 +7,14 @@ namespace IisHelperService.Domain
 {
     public static class IisManager
     {
-        public static void CreateSite(Action<string> consoleWriteLine, string poolName, string siteName, string siteUrl, string siteFolder)
+        public static void CreateSite(
+            Action<string> consoleWriteLine,
+            string poolName,
+            bool? poolEnable32BitAppOnWin64,
+            string poolManagedRuntimeVersion,
+            string siteName,
+            string siteUrl,
+            string siteFolder)
         {
             using (var serverManager = new ServerManager())
             {
@@ -18,8 +25,8 @@ namespace IisHelperService.Domain
                 else
                 {
                     ApplicationPool newPool = serverManager.ApplicationPools.Add(poolName);
-                    newPool.Enable32BitAppOnWin64 = false;
-                    newPool.ManagedRuntimeVersion = "v4.0";
+                    newPool.Enable32BitAppOnWin64 = poolEnable32BitAppOnWin64 ?? false;
+                    newPool.ManagedRuntimeVersion = poolManagedRuntimeVersion ?? "v4.0";
                     consoleWriteLine("TRY CREATE PULL: " + poolName);
                 }
                 if (serverManager.Sites.Any(x => x.Name == siteName))
@@ -38,7 +45,14 @@ namespace IisHelperService.Domain
             }
         }
 
-        public static void CreateApplication(Action<string> consoleWriteLine, string poolName, string siteName, string appPath, string phisicalPath)
+        public static void CreateApplication(
+            Action<string> consoleWriteLine,
+            string poolName,
+            bool? poolEnable32BitAppOnWin64,
+            string poolManagedRuntimeVersion,
+            string siteName,
+            string appPath,
+            string phisicalPath)
         {
             using (var serverManager = new ServerManager())
             {
@@ -49,9 +63,8 @@ namespace IisHelperService.Domain
                 else
                 {
                     ApplicationPool newPool = serverManager.ApplicationPools.Add(poolName);
-                    newPool.Enable32BitAppOnWin64 = false;
-                    // todo  ManagedRuntimeVersion вынести везде в параметр над
-                    newPool.ManagedRuntimeVersion = "";
+                    newPool.Enable32BitAppOnWin64 = poolEnable32BitAppOnWin64 ?? false;
+                    newPool.ManagedRuntimeVersion = poolManagedRuntimeVersion ?? "v4.0";
                     consoleWriteLine("TRY CREATE PULL: " + poolName);
                 }
 
@@ -70,7 +83,11 @@ namespace IisHelperService.Domain
             }
         }
 
-        public static void CreatePool(Action<string> consoleWriteLine, string poolName)
+        public static void CreatePool(
+            Action<string> consoleWriteLine, 
+            string poolName,
+            bool? poolEnable32BitAppOnWin64,
+            string poolManagedRuntimeVersion)
         {
             using (var serverManager = new ServerManager())
             {
@@ -82,8 +99,8 @@ namespace IisHelperService.Domain
                 else
                 {
                     ApplicationPool newPool = serverManager.ApplicationPools.Add(poolName);
-                    newPool.Enable32BitAppOnWin64 = false;
-                    newPool.ManagedRuntimeVersion = "v4.0";
+                    newPool.Enable32BitAppOnWin64 = poolEnable32BitAppOnWin64 ?? false;
+                    newPool.ManagedRuntimeVersion = poolManagedRuntimeVersion ?? "v4.0";
                     consoleWriteLine("TRY CREATE PULL: " + poolName);
                     serverManager.CommitChanges();
                     consoleWriteLine("SUCCESS!");

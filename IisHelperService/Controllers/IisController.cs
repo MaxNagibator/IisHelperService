@@ -17,6 +17,8 @@ namespace IisHelperService.Controllers
     public class CreateSiteRequest
     {
         public string PoolName { get; set; }
+        public bool? PoolEnable32BitAppOnWin64 { get; set; }
+        public string PoolManagedRuntimeVersion { get; set; }
         public string SiteName { get; set; }
         public string SiteUrl { get; set; }
         public string SiteFolder { get; set; }
@@ -25,6 +27,8 @@ namespace IisHelperService.Controllers
     public class CreateApplicationRequest
     {
         public string PoolName { get; set; }
+        public bool? PoolEnable32BitAppOnWin64 { get; set; }
+        public string PoolManagedRuntimeVersion { get; set; }
         public string SiteName { get; set; }
         public string AppPath { get; set; }
         public string PhisicalPath { get; set; }
@@ -40,6 +44,13 @@ namespace IisHelperService.Controllers
         public string PoolName { get; set; }
     }
 
+    public class CreatePoolRequest
+    {
+        public string PoolName { get; set; }
+        public bool? PoolEnable32BitAppOnWin64 { get; set; }
+        public string PoolManagedRuntimeVersion { get; set; }
+    }
+
     public class GetPoolWithoutSitesRequest
     {
     }
@@ -48,7 +59,7 @@ namespace IisHelperService.Controllers
         public string Search { get; set; }
     }
 
-	[RoutePrefix("api/Iis")]
+    [RoutePrefix("api/Iis")]
     public class IisController : ApiController
     {
         private Result Execute(Action<Action<string>> action)
@@ -72,14 +83,28 @@ namespace IisHelperService.Controllers
         [Route("CreateSite")]
         public Result CreateSite([FromBody] CreateSiteRequest request)
         {
-            return Execute((act) => IisManager.CreateSite(act, request.PoolName, request.SiteName, request.SiteUrl, request.SiteFolder));
+            return Execute((act) => IisManager.CreateSite(
+                act,
+                request.PoolName,
+                request.PoolEnable32BitAppOnWin64,
+                request.PoolManagedRuntimeVersion,
+                request.SiteName,
+                request.SiteUrl,
+                request.SiteFolder));
         }
 
         [HttpPost]
         [Route("CreateApplication")]
         public Result CreateApplication([FromBody] CreateApplicationRequest request)
         {
-            return Execute((act) => IisManager.CreateApplication(act, request.PoolName, request.SiteName, request.AppPath, request.PhisicalPath));
+            return Execute((act) => IisManager.CreateApplication(
+                act,
+                request.PoolName,
+                request.PoolEnable32BitAppOnWin64,
+                request.PoolManagedRuntimeVersion,
+                request.SiteName,
+                request.AppPath,
+                request.PhisicalPath));
         }
 
         [HttpPost]
@@ -91,9 +116,13 @@ namespace IisHelperService.Controllers
 
         [HttpPost]
         [Route("CreatePool")]
-        public Result CreatePool([FromBody] PoolRequest request)
+        public Result CreatePool([FromBody] CreatePoolRequest request)
         {
-            return Execute((act) => IisManager.CreatePool(act, request.PoolName));
+            return Execute((act) => IisManager.CreatePool(
+                act,
+                request.PoolName,
+                request.PoolEnable32BitAppOnWin64,
+                request.PoolManagedRuntimeVersion));
         }
 
         [HttpPost]
