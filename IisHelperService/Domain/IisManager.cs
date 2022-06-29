@@ -26,8 +26,8 @@ namespace IisHelperService.Domain
                 {
                     ApplicationPool newPool = serverManager.ApplicationPools.Add(poolName);
                     newPool.Enable32BitAppOnWin64 = poolEnable32BitAppOnWin64 ?? false;
-                    newPool.ManagedRuntimeVersion = poolManagedRuntimeVersion ?? "v4.0";
-                    consoleWriteLine("TRY CREATE PULL: " + poolName);
+                    newPool.ManagedRuntimeVersion = poolManagedRuntimeVersion ?? "";
+                    consoleWriteLine("TRY CREATE PULL: " + poolName + " enable32=" + newPool.Enable32BitAppOnWin64 + " clr=" + newPool.ManagedRuntimeVersion);
                 }
                 if (serverManager.Sites.Any(x => x.Name == siteName))
                 {
@@ -64,15 +64,23 @@ namespace IisHelperService.Domain
                 {
                     ApplicationPool newPool = serverManager.ApplicationPools.Add(poolName);
                     newPool.Enable32BitAppOnWin64 = poolEnable32BitAppOnWin64 ?? false;
-                    newPool.ManagedRuntimeVersion = poolManagedRuntimeVersion ?? "v4.0";
-                    consoleWriteLine("TRY CREATE PULL: " + poolName);
+                    newPool.ManagedRuntimeVersion = poolManagedRuntimeVersion ?? "";
+                    consoleWriteLine("TRY CREATE PULL: " + poolName + " enable32=" + newPool.Enable32BitAppOnWin64 + " clr=" + newPool.ManagedRuntimeVersion);
                 }
 
                 var site = serverManager.Sites.FirstOrDefault(x => x.Name == siteName);
                 if (site != null)
                 {
-                    site.Applications.Add(appPath, phisicalPath);
-                    consoleWriteLine("TRY CREATE APP: " + appPath);
+                    if (site.Applications.Any(x => x.Path == appPath))
+                    {
+                        consoleWriteLine("APP EXISTS: " + appPath);
+                    }
+                    else
+                    {
+                        var app = site.Applications.Add(appPath, phisicalPath);
+                        app.ApplicationPoolName = poolName;
+                        consoleWriteLine("TRY CREATE APP: " + appPath);
+                    }
                 }
                 else
                 {
@@ -100,8 +108,8 @@ namespace IisHelperService.Domain
                 {
                     ApplicationPool newPool = serverManager.ApplicationPools.Add(poolName);
                     newPool.Enable32BitAppOnWin64 = poolEnable32BitAppOnWin64 ?? false;
-                    newPool.ManagedRuntimeVersion = poolManagedRuntimeVersion ?? "v4.0";
-                    consoleWriteLine("TRY CREATE PULL: " + poolName);
+                    newPool.ManagedRuntimeVersion = poolManagedRuntimeVersion ?? "";
+                    consoleWriteLine("TRY CREATE PULL: " + poolName + " enable32=" + newPool.Enable32BitAppOnWin64 + " clr=" + newPool.ManagedRuntimeVersion);
                     serverManager.CommitChanges();
                     consoleWriteLine("SUCCESS!");
                 }
